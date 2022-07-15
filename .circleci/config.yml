@@ -16,7 +16,7 @@ jobs:
           name: Install dependencies
           command: |
             sudo apt-get update
-            sudo apt-get install -y clang-tidy
+            sudo apt-get install -y clang-tidy libtclap-dev
       - run:
           name: Create build directory
           command: |
@@ -36,6 +36,6 @@ jobs:
           paths:
             - "build"
 workflows:
-  build-and-test:
+  build:
     jobs:
       - build
