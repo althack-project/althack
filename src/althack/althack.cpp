@@ -13,7 +13,25 @@ bool AltHack::setup() {
 }
 
 bool AltHack::run() {
-  return false;
+  using namespace std::chrono_literals;
+  std::unique_lock<std::mutex> lock(run_mutex_);
+
+  while (run_cv_.wait_for(lock, 1ms) == std::cv_status::timeout) {
+    const bool goon = main_window_.processIo();
+    if (!goon) {
+      break;
+    }
+    main_window_.render();
+  }
+
+  std::cout << "\r";  // Move cursor back to line beginning after potential CTRL-C (to avoid ^C).
+  spdlog::info("Mainloop exit requested");
+
+  return true;
+}
+
+void AltHack::stop() {
+  run_cv_.notify_all();
 }
 
 bool AltHack::teardown() {

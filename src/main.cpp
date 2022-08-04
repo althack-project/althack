@@ -1,5 +1,7 @@
 // Standard
+#include <csignal>
 #include <cstdlib>
+#include <functional>
 
 // spdlog
 #include <spdlog/spdlog.h>
@@ -9,6 +11,14 @@
 
 // AltHack
 #include <althack/althack.hpp>
+
+namespace {
+  // ...
+  std::function<void(int)> shutdown_handler;
+
+  // ...
+  void signal_handler(int signal) { shutdown_handler(signal); }
+}  // namespace
 
 int main(int argc, char** argv) {
   std::string config_path = "";
@@ -46,6 +56,9 @@ int main(int argc, char** argv) {
     spdlog::error("Failed, quitting");
     return EXIT_FAILURE;
   }
+
+  std::signal(SIGINT, signal_handler);
+  shutdown_handler = [&](int signal) { instance.stop(); };
 
   spdlog::info("Ready, entering main loop");
   if (instance.run()) {
