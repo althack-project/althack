@@ -7,21 +7,27 @@ bool AltHack::loadConfig(const std::string& filepath) {
 }
 
 bool AltHack::setup() {
-  spdlog::info("Version " + getVersion());
+  if (!headless_ && !main_window_.setup("AltHack", 1024, 768)) {
+    return false;
+  }
 
-  return main_window_.setup("AltHack", 1024, 768);
+  return true;
 }
 
 bool AltHack::run() {
   using namespace std::chrono_literals;
   std::unique_lock<std::mutex> lock(run_mutex_);
+  should_run_ = true;
 
-  while (run_cv_.wait_for(lock, 1ms) == std::cv_status::timeout) {
-    const bool goon = main_window_.processIo();
-    if (!goon) {
-      break;
+  while (run_cv_.wait_for(lock, 1ms, [&]{ return should_run_; })) {
+    if (!headless_) {
+      const bool goon = main_window_.processIo();
+      if (!goon) {
+        break;
+      }
+      main_window_.render();
     }
-    main_window_.render();
+    // TODO: Do headless things here.
   }
 
   std::cout << "\r";  // Move cursor back to line beginning after potential CTRL-C (to avoid ^C).
@@ -31,11 +37,16 @@ bool AltHack::run() {
 }
 
 void AltHack::stop() {
+  should_run_ = false;
   run_cv_.notify_all();
 }
 
 bool AltHack::teardown() {
-  return main_window_.teardown();
+  if (!headless_ && main_window_.teardown()) {
+    return false;
+  }
+
+  return true;
 }
 
 std::string AltHack::getVersion() const {
@@ -43,6 +54,10 @@ std::string AltHack::getVersion() const {
     std::to_string(AH_MAJOR_VERSION) + "." +
     std::to_string(AH_MINOR_VERSION) + "." +
     std::to_string(AH_PATCH_VERSION);
+}
+
+void AltHack::setHeadless(bool headless) {
+  headless_ = headless;
 }
 
 }  // namespace althack

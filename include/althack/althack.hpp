@@ -41,12 +41,17 @@ class AltHack {
 
   std::string getVersion() const;
 
+  void setHeadless(bool headless);
+
  private:
   Configuration configuration_;
   MainWindow main_window_;
 
+  bool should_run_;
   std::mutex run_mutex_;
   std::condition_variable run_cv_;
+
+  bool headless_;
 };
 
 }  // namespace althack

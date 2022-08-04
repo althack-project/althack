@@ -13,15 +13,18 @@
 #include <althack/althack.hpp>
 
 namespace {
-  // ...
-  std::function<void(int)> shutdown_handler;
 
-  // ...
-  void signal_handler(int signal) { shutdown_handler(signal); }
+// ...
+std::function<void(int)> shutdown_handler;
+
+// ...
+void signal_handler(int signal) { shutdown_handler(signal); }
+
 }  // namespace
 
 int main(int argc, char** argv) {
   std::string config_path = "";
+  bool headless = false;
 
   // Parse command line options
   try {
@@ -30,10 +33,14 @@ int main(int argc, char** argv) {
     TCLAP::ValueArg<std::string> config_path_arg(
         "c", "config", "Configuration file to use", false, "", "string");
     cmd.add(config_path_arg);
+    TCLAP::SwitchArg headless_arg(
+        "H", "headless", "Whether to run in headless mode", false);
+    cmd.add(headless_arg);
 
     cmd.parse(argc, argv);
     config_path = config_path_arg.getValue();
-  } catch(const TCLAP::ArgException& ex) {
+    headless = headless_arg.getValue();
+  } catch (const TCLAP::ArgException& ex) {
     spdlog::error("TCLAP error (for argument \"" + std::string(ex.argId()) + "\": " + std::string(ex.error()));
     return EXIT_FAILURE;
   }
@@ -42,8 +49,13 @@ int main(int argc, char** argv) {
     config_path = "../configs/default.cfg";
   }
 
-  spdlog::info("Instantiating AltHack");
   althack::AltHack instance;
+  spdlog::info("Instantiating AltHack (version " + instance.getVersion() + ")");
+  instance.setHeadless(headless);
+
+  if (headless) {
+    spdlog::info("Running in headless mode");
+  }
 
   spdlog::info("Loading configuration from file \"" + config_path + "\"");
   if (!instance.loadConfig(config_path)) {
