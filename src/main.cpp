@@ -7,15 +7,15 @@
 // TCLAP
 #include <tclap/CmdLine.h>
 
-// Dungeon Miner
-#include <dungeon_miner/dungeon_miner.hpp>
+// AltHack
+#include <althack/althack.hpp>
 
 int main(int argc, char** argv) {
   std::string config_path = "";
 
   // Parse command line options
   try {
-    TCLAP::CmdLine cmd("Dungeon Miner command line", ' ', "0.1");
+    TCLAP::CmdLine cmd("AltHack command line", ' ', "0.1");
 
     TCLAP::ValueArg<std::string> config_path_arg(
         "c", "config", "Configuration file to use", false, "", "string");
@@ -32,8 +32,8 @@ int main(int argc, char** argv) {
     config_path = "../configs/default.cfg";
   }
 
-  spdlog::info("Instantiating Dungeon Miner");
-  dungeon_miner::DungeonMiner instance;
+  spdlog::info("Instantiating AltHack");
+  althack::AltHack instance;
 
   spdlog::info("Loading configuration from file \"" + config_path + "\"");
   if (!instance.loadConfig(config_path)) {
@@ -59,6 +59,8 @@ int main(int argc, char** argv) {
     spdlog::warn("Failed, quitting");
     return EXIT_FAILURE;
   }
+
+  spdlog::info("Done, see you soon!");
 
   return EXIT_SUCCESS;
 }

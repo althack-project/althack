@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(dungeon_miner)
+project(althack)
 
 # Project cmake settings
 set(CMAKE_CXX_STANDARD 17)
@@ -29,7 +29,7 @@ add_subdirectory(${THIRDPARTY_DIR}/SDL)
 add_subdirectory(${THIRDPARTY_DIR}/libconfig)
 add_subdirectory(${THIRDPARTY_DIR}/spdlog)
 
-configure_file(include/dungeon_miner/config.hpp.in include/dungeon_miner/config.hpp)
+configure_file(include/althack/config.hpp.in include/althack/config.hpp)
 
 include_directories(
   include
@@ -49,10 +49,11 @@ add_library(imgui
   ${THIRDPARTY_DIR}/imgui/backends/imgui_impl_sdlrenderer.cpp)
 
 add_library(${PROJECT_NAME}
-  src/dungeon_miner/dungeon_miner.cpp)
+  src/althack/althack.cpp)
 
 add_executable(${PROJECT_NAME}-bin
-  src/main.cpp)
+  src/main.cpp
+  src/althack/main_window.cpp)
 
 target_link_libraries(${PROJECT_NAME}
   imgui

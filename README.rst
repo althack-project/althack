@@ -1,6 +1,8 @@
-=============
-Dungeon Miner
-=============
+=======
+AltHack
+=======
 
-This file will contain useful information about the Dungeon Miner project.
+This file will contain useful information about the AltHack project.
 Stay tuned!
+
+`AltHack Project Website <https://althack.com>`
