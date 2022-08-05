@@ -26,15 +26,17 @@ int main(int argc, char** argv) {
   std::string config_path = "";
   bool headless = false;
 
+  althack::AltHack instance;
+
   // Parse command line options
   try {
-    TCLAP::CmdLine cmd("AltHack command line", ' ', "0.1");
+    TCLAP::CmdLine cmd("AltHack command line", ' ', instance.getVersion());
 
     TCLAP::ValueArg<std::string> config_path_arg(
-        "c", "config", "Configuration file to use", false, "", "string");
+        "c", "config", "Path of configuration file to use", false, "", "path");
     cmd.add(config_path_arg);
     TCLAP::SwitchArg headless_arg(
-        "H", "headless", "Whether to run in headless mode", false);
+        "H", "headless", "Run in headless mode", false);
     cmd.add(headless_arg);
 
     cmd.parse(argc, argv);
@@ -49,7 +51,6 @@ int main(int argc, char** argv) {
     config_path = "../configs/default.cfg";
   }
 
-  althack::AltHack instance;
   spdlog::info("Instantiating AltHack (version " + instance.getVersion() + ")");
   instance.setHeadless(headless);
 

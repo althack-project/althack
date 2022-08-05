@@ -2,6 +2,12 @@
 
 namespace althack {
 
+AltHack::AltHack()
+  : should_run_{false}
+  , headless_{false}
+  , backend_{nullptr} {
+}
+
 bool AltHack::loadConfig(const std::string& filepath) {
   return true;
 }
@@ -10,6 +16,11 @@ bool AltHack::setup() {
   if (!headless_ && !main_window_.setup("AltHack", 1024, 768)) {
     return false;
   }
+
+  // TODO: Decide how server/client backend is determined.
+  backend_ = std::make_unique<backends::ServerBackend>();
+
+  spdlog::info("Using backend: " + backend_->getIdentifier());
 
   return true;
 }

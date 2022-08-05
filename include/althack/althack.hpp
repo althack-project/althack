@@ -17,6 +17,8 @@
 // AltHack
 #include <althack/config.hpp>
 #include <althack/configuration.hpp>
+#include <althack/backend.hpp>
+#include <althack/backends/server_backend.hpp>
 #include <althack/main_window.hpp>
 
 namespace althack {
@@ -24,6 +26,8 @@ namespace althack {
 // ...
 class AltHack {
  public:
+  AltHack();
+
   // ...
   bool loadConfig(const std::string& filepath);
 
@@ -52,6 +56,8 @@ class AltHack {
   std::condition_variable run_cv_;
 
   bool headless_;
+
+  std::unique_ptr<Backend> backend_;
 };
 
 }  // namespace althack
