@@ -10,6 +10,8 @@ class ServerBackend : public Backend {
  public:
   ServerBackend();
 
+  void step() override;
+
  private:
 };
 

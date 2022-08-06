@@ -11,6 +11,8 @@ class Backend {
 
   const std::string& getIdentifier() const;
 
+  virtual void step() = 0;
+
  private:
   const std::string identifier_;  
 };

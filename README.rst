@@ -2,6 +2,11 @@
 AltHack
 =======
 
+Build status:
+
+.. image:: https://circleci.com/gh/fairlight1337/althack.svg?style=svg
+    :target: https://circleci.com/gh/fairlight1337/althack
+
 This file will contain useful information about the AltHack project.
 Stay tuned!
 

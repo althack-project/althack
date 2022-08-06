@@ -38,6 +38,8 @@ bool AltHack::run() {
       }
       main_window_.render();
     }
+    backend_->step();
+
     // TODO: Do headless things here.
   }
 
@@ -53,7 +55,7 @@ void AltHack::stop() {
 }
 
 bool AltHack::teardown() {
-  if (!headless_ && main_window_.teardown()) {
+  if (!headless_ && !main_window_.teardown()) {
     return false;
   }
 

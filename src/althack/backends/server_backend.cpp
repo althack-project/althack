@@ -7,5 +7,9 @@ ServerBackend::ServerBackend()
   : Backend("server_backend") {
 }
 
+void ServerBackend::step() {
+  // ...
+}
+
 }  // namespace backends
 }  // namespace althack
