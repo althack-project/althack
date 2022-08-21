@@ -37,6 +37,8 @@ class MainWindow {
   std::string getSdlVersionLinked() const;
 
  private:
+  void canvas(const std::string& identifier, ImVec2 size);
+
   SDL_Window* window_;
   SDL_Renderer* renderer_;
 };
