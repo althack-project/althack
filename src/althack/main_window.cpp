@@ -74,16 +74,19 @@ void MainWindow::canvas(const std::string& identifier, ImVec2 size) {
   if (!ImGui::ItemAdd(bb, id))
     return;
 
+  // TODO: Implement interaction here.
   /*bool hovered, held;
     bool pressed = ButtonBehavior(bb, id, &hovered, &held, flags);*/
 
   const ImU32 bg_col = ImGui::ColorConvertFloat4ToU32(ImVec4(0.75, 0.75, 0.75, 1.0));
+  // TODO: Implement additional rendering here (grid, objects, connections, effects).
   ImGui::RenderFrame(bb.Min, bb.Max, bg_col, true, g.Style.FrameRounding);
 
   IMGUI_TEST_ENGINE_ITEM_INFO(id, identifier.c_str(), g.LastItemData.StatusFlags);
 }
 
 bool MainWindow::render() {
+  // TODO: Implement switch for light/dark theme.
   ImGui::StyleColorsDark();
 
   const float controls_window_fraction = 200.0f;

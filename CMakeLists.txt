@@ -21,7 +21,6 @@ set(THIRDPARTY_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
 
 # libconfig cmake switches
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-#set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
 # Add 3rdparty components
@@ -64,3 +63,17 @@ target_link_libraries(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}-bin
   ${PROJECT_NAME})
+
+# Doxygen Documentation
+find_package(Doxygen
+  REQUIRED dot)
+
+set(DOXYGEN_GENERATE_HTML YES)
+set(DOXYGEN_GENERATE_MAN NO)
+
+set(DOXYGEN_PROJECT_BRIEF "${PROJECT_NAME}")
+doxygen_add_docs(
+  doxygen
+  ${PROJECT_SOURCE_DIR}/src
+  ${PROJECT_SOURCE_DIR}/include
+  COMMENT "Generate source code documentation")
