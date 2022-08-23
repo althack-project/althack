@@ -62,7 +62,7 @@ bool MainWindow::processIo() {
   return true;
 }
 
-void MainWindow::canvas(const std::string& identifier, ImVec2 size) {
+void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const ImVec2 position) {
   ImGuiWindow* window = ImGui::GetCurrentWindow();
   if (window->SkipItems)
     return;
@@ -74,61 +74,95 @@ void MainWindow::canvas(const std::string& identifier, ImVec2 size) {
   if (!ImGui::ItemAdd(bb, id))
     return;
 
-  // TODO: Implement interaction here.
-  /*bool hovered, held;
-    bool pressed = ButtonBehavior(bb, id, &hovered, &held, flags);*/
-
-  const ImU32 bg_col = ImGui::ColorConvertFloat4ToU32(ImVec4(0.75, 0.75, 0.75, 1.0));
+  const ImU32 bg_col = ImGui::ColorConvertFloat4ToU32(ImVec4(1.0, 1.0, 1.0, 1.0));
   // TODO: Implement additional rendering here (grid, objects, connections, effects).
   ImGui::RenderFrame(bb.Min, bb.Max, bg_col, true, g.Style.FrameRounding);
+
+  // Draw grid
+  const float stride_rows = 100.0f;
+  const float stride_cols = 100.0f;
+  const uint32_t substeps_rows = 5;
+  const uint32_t substeps_cols = 5;
+
+  const ImVec2 origin = (bb.Max - bb.Min) / 2.0 + bb.Min;
+  const uint32_t rows = (bb.Max - bb.Min).y / (stride_rows / static_cast<float>(substeps_rows));
+  const uint32_t cols = (bb.Max - bb.Min).x / (stride_cols / static_cast<float>(substeps_cols));
+
+  const ImU32 grid_col_major = ImGui::ColorConvertFloat4ToU32(ImVec4(0.5, 0.5, 0.5, 0.1));
+  const ImU32 grid_col_minor = ImGui::ColorConvertFloat4ToU32(ImVec4(0.5, 0.5, 0.5, 0.05));
+
+  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+  // Draw grid columns
+  for (uint32_t col = 0; col < std::ceil(cols / 2.0); ++col) {
+    const ImVec2 startp = ImVec2(origin.x + position.x, bb.Min.y - 1.0f) + ImVec2(col * (stride_cols / substeps_cols), 0.0f);
+    const ImVec2 endp = startp + ImVec2(0.0f, size.y);
+    draw_list->AddLine(startp, endp, col % substeps_cols == 0 ? grid_col_major : grid_col_minor);
+
+    // The center line is only drawn once.
+    if (col == 0) { continue; }
+
+    const ImVec2 startn = ImVec2(origin.x + position.x, bb.Min.y - 1.0f) - ImVec2(col * (stride_cols / substeps_cols), 0.0f);
+    const ImVec2 endn = startn + ImVec2(0.0f, size.y);
+    draw_list->AddLine(startn, endn, col % substeps_cols == 0 ? grid_col_major : grid_col_minor);
+  }
+
+  // Draw grid rows
+  for (uint32_t row = 0; row < std::ceil(rows / 2.0); ++row) {
+    const ImVec2 startp = ImVec2(bb.Min.x - 1.0f, origin.y + position.y) + ImVec2(0.0f, row * (stride_rows / substeps_rows));
+    const ImVec2 endp = startp + ImVec2(size.x, 0.0f);
+    draw_list->AddLine(startp, endp, row % substeps_rows == 0 ? grid_col_major : grid_col_minor);
+
+    // The center line is only drawn once.
+    if (row == 0) { continue; }
+
+    const ImVec2 startn = ImVec2(bb.Min.x - 1.0f, origin.y + position.y) - ImVec2(0.0f, row * (stride_rows / substeps_rows));
+    const ImVec2 endn = startn + ImVec2(size.x, 0.0f);
+    draw_list->AddLine(startn, endn, row % substeps_rows == 0 ? grid_col_major : grid_col_minor);
+  }
+
+  // Handle UI interaction
+  if (ImGui::IsMouseDragging(0/* left button */)) {
+    const ImVec2 clicked_pos = ImGui::GetIO().MouseClickedPos[0];
+    if (bb.Contains(clicked_pos)) {
+      canvas_position_ = drag_start_position_ + ImGui::GetMouseDragDelta();
+    }
+  } else {
+    drag_start_position_ = canvas_position_;
+  }
 
   IMGUI_TEST_ENGINE_ITEM_INFO(id, identifier.c_str(), g.LastItemData.StatusFlags);
 }
 
-bool MainWindow::render() {
-  // TODO: Implement switch for light/dark theme.
-  ImGui::StyleColorsDark();
-
-  const float controls_window_fraction = 200.0f;
-
-  ImGui_ImplSDLRenderer_NewFrame();
-  ImGui_ImplSDL2_NewFrame();
-  ImGui::NewFrame();
-
-  ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-  ImGui::SetNextWindowSize(ImVec2(controls_window_fraction, ImGui::GetIO().DisplaySize.y));
+void MainWindow::rootWindow() {
   bool is_open;
-  ImGui::Begin("Control Window", &is_open,
-               ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
-               ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus |
-               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-               ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse |
-               ImGuiWindowFlags_NoDecoration);
-  ImGui::TreeNode("Node 1");
-  ImGui::TreePop();
-  ImGui::End();
-
-  ImGui::SetNextWindowPos(ImVec2(controls_window_fraction - 1.0f, 0.0f));
+  ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
   ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-  ImGui::Begin("Central Window", &is_open,
+  ImGui::Begin("Root Window", &is_open,
                ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
                ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus |
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse |
                ImGuiWindowFlags_NoDecoration);
   ImGui::Text("Framerate: %.2f fps", ImGui::GetIO().Framerate);
-  const ImVec2 size_min = ImGui::GetWindowContentRegionMin();
-  const ImVec2 size_max = ImGui::GetWindowContentRegionMax();
+  const ImVec2 window_size = ImGui::GetWindowSize();
   const ImGuiWindow* window = ImGui::GetCurrentWindow();
-  canvas("canvas", ImVec2(size_max.x - size_min.x - controls_window_fraction - 1.0f,
-                          size_max.y - size_min.y - window->DC.CursorPos.y + 5.0f));
+  ImGui::SetCursorPosX(0.0f);
+  canvas("canvas", ImVec2(window_size.x, window_size.y - window->DC.CursorPos.y - 4.0f),
+         canvas_position_);
   ImGui::End();
+}
 
-  // ...
-  // ImGui::Begin("Some Window!");
-  // ImGui::Text("Hello from another window!");
-  // ImGui::End();
-  // ...
+bool MainWindow::render() {
+  // TODO: Implement switch for light/dark theme.
+  ImGui::StyleColorsDark();
+
+  ImGui_ImplSDLRenderer_NewFrame();
+  ImGui_ImplSDL2_NewFrame();
+  ImGui::NewFrame();
+
+  // Render the root window.
+  rootWindow();
 
   ImGui::Render();
   SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 0);
@@ -173,5 +207,5 @@ std::string MainWindow::getSdlVersionLinked() const {
     std::to_string(version.minor) + "." +
     std::to_string(version.patch);
 }
-  
+
 }  // namespace althack

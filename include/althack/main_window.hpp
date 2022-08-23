@@ -64,14 +64,28 @@ class MainWindow {
   /*!
     \param identifier The string identifier of this widget.
     \param size The size of this widget in pixels.
+    \param position The scroll position to use as drawing origin in canvas coordinates.
    */
-  void canvas(const std::string& identifier, ImVec2 size);
+  void canvas(const std::string& identifier, const ImVec2 size, const ImVec2 position);
+
+  //! \brief Renders the root window.
+  /*!
+    Called by render().
+    \sa render()
+   */
+  void rootWindow();
 
   //! \brief The SDL window handle for this instance.
   SDL_Window* window_;
 
   //! \brief The SDL renderer handle for this instance.
   SDL_Renderer* renderer_;
+
+  //! \brief The current display position of the canvas.
+  ImVec2 canvas_position_;
+
+  //! \brief The canvas position when dragging started.
+  ImVec2 drag_start_position_;
 };
 
 }  // namespace althack
