@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build:
+  build_application:
     docker:
       - image: cimg/base:stable
     resource_class: small
@@ -16,7 +16,7 @@ jobs:
           name: Install dependencies
           command: |
             sudo apt-get update
-            sudo apt-get install -y clang-tidy libtclap-dev
+            sudo apt-get install -y clang-tidy libtclap-dev doxygen graphviz
       - run:
           name: Create build directory
           command: |
@@ -35,7 +35,42 @@ jobs:
           root: .
           paths:
             - "build"
+  build_documentation:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - checkout
+      - run:
+          name: Pull git submodules
+          command: |
+            git submodule init
+            git submodule update
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y clang-tidy libtclap-dev doxygen graphviz
+      - run:
+          name: Create build directory
+          command: |
+            mkdir -p build
+      - run:
+          name: Setup cmake
+          command: |
+            cd build
+            cmake ..
+      - run:
+          name: Build
+          command: |
+            cd build
+            make doxygen
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "build"
 workflows:
   build:
     jobs:
-      - build
+      - build_application
+      - build_documentation
