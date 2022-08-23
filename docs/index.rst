@@ -1,4 +1,6 @@
 Welcome to the AltHack Documentaion!
 ====================================
 
-tbd
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
