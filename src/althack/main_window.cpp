@@ -84,45 +84,53 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
   const uint32_t substeps_rows = 5;
   const uint32_t substeps_cols = 5;
 
-  const ImVec2 origin = (bb.Max - bb.Min) / 2.0 + bb.Min;
-  const uint32_t rows = (bb.Max - bb.Min).y / (stride_rows / static_cast<float>(substeps_rows));
-  const uint32_t cols = (bb.Max - bb.Min).x / (stride_cols / static_cast<float>(substeps_cols));
-
   const ImU32 grid_col_major = ImGui::ColorConvertFloat4ToU32(ImVec4(0.5, 0.5, 0.5, 0.1));
   const ImU32 grid_col_minor = ImGui::ColorConvertFloat4ToU32(ImVec4(0.5, 0.5, 0.5, 0.05));
+
+  const ImVec2 origin = (bb.Max - bb.Min) / 2.0 + bb.Min;
+  // Draw two more (positive, negative direction) of each (rows, cols) to account for drag offset.
+  const uint32_t rows = ((bb.Max - bb.Min).y / (stride_rows / static_cast<float>(substeps_rows))) + 2 * substeps_rows;
+  const uint32_t cols = ((bb.Max - bb.Min).x / (stride_cols / static_cast<float>(substeps_cols))) + 2 * substeps_cols;
+
+  float draw_position_x = position.x;
+  while (draw_position_x >= stride_cols) { draw_position_x -= stride_cols; }
+  while (draw_position_x <= -stride_cols) { draw_position_x += stride_cols; }
+  float draw_position_y = position.y;
+  while (draw_position_y >= stride_rows) { draw_position_y -= stride_rows; }
+  while (draw_position_y <= stride_rows) { draw_position_y += stride_rows; }
 
   ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
   // Draw grid columns
   for (uint32_t col = 0; col < std::ceil(cols / 2.0); ++col) {
-    const ImVec2 startp = ImVec2(origin.x + position.x, bb.Min.y - 1.0f) + ImVec2(col * (stride_cols / substeps_cols), 0.0f);
+    const ImVec2 startp = ImVec2(origin.x + draw_position_x, bb.Min.y - 1.0f) + ImVec2(col * (stride_cols / substeps_cols), 0.0f);
     const ImVec2 endp = startp + ImVec2(0.0f, size.y);
     draw_list->AddLine(startp, endp, col % substeps_cols == 0 ? grid_col_major : grid_col_minor);
 
     // The center line is only drawn once.
     if (col == 0) { continue; }
 
-    const ImVec2 startn = ImVec2(origin.x + position.x, bb.Min.y - 1.0f) - ImVec2(col * (stride_cols / substeps_cols), 0.0f);
+    const ImVec2 startn = ImVec2(origin.x + draw_position_x, bb.Min.y - 1.0f) - ImVec2(col * (stride_cols / substeps_cols), 0.0f);
     const ImVec2 endn = startn + ImVec2(0.0f, size.y);
     draw_list->AddLine(startn, endn, col % substeps_cols == 0 ? grid_col_major : grid_col_minor);
   }
 
   // Draw grid rows
   for (uint32_t row = 0; row < std::ceil(rows / 2.0); ++row) {
-    const ImVec2 startp = ImVec2(bb.Min.x - 1.0f, origin.y + position.y) + ImVec2(0.0f, row * (stride_rows / substeps_rows));
+    const ImVec2 startp = ImVec2(bb.Min.x - 1.0f, origin.y + draw_position_y) + ImVec2(0.0f, row * (stride_rows / substeps_rows));
     const ImVec2 endp = startp + ImVec2(size.x, 0.0f);
     draw_list->AddLine(startp, endp, row % substeps_rows == 0 ? grid_col_major : grid_col_minor);
 
     // The center line is only drawn once.
     if (row == 0) { continue; }
 
-    const ImVec2 startn = ImVec2(bb.Min.x - 1.0f, origin.y + position.y) - ImVec2(0.0f, row * (stride_rows / substeps_rows));
+    const ImVec2 startn = ImVec2(bb.Min.x - 1.0f, origin.y + draw_position_y) - ImVec2(0.0f, row * (stride_rows / substeps_rows));
     const ImVec2 endn = startn + ImVec2(size.x, 0.0f);
     draw_list->AddLine(startn, endn, row % substeps_rows == 0 ? grid_col_major : grid_col_minor);
   }
 
   // Handle UI interaction
-  if (ImGui::IsMouseDragging(0/* left button */)) {
+  if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
     const ImVec2 clicked_pos = ImGui::GetIO().MouseClickedPos[0];
     if (bb.Contains(clicked_pos)) {
       canvas_position_ = drag_start_position_ + ImGui::GetMouseDragDelta();
@@ -145,10 +153,14 @@ void MainWindow::rootWindow() {
                ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse |
                ImGuiWindowFlags_NoDecoration);
   ImGui::Text("Framerate: %.2f fps", ImGui::GetIO().Framerate);
+  ImGui::SameLine();
+  ImGui::Text(" | ");
+  ImGui::SameLine();
+  ImGui::Text("Position: %.2f, %.2f", canvas_position_.x, canvas_position_.y);
   const ImVec2 window_size = ImGui::GetWindowSize();
   const ImGuiWindow* window = ImGui::GetCurrentWindow();
   ImGui::SetCursorPosX(0.0f);
-  canvas("canvas", ImVec2(window_size.x, window_size.y - window->DC.CursorPos.y - 4.0f),
+  canvas("play_area", ImVec2(window_size.x, window_size.y - window->DC.CursorPos.y - 4.0f),
          canvas_position_);
   ImGui::End();
 }
