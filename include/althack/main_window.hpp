@@ -1,15 +1,25 @@
 #ifndef ALTHACK_MAINWINDOW_HPP_
 #define ALTHACK_MAINWINDOW_HPP_
 
+// Standard
+#include <memory>
 #include <string>
+#include <vector>
 
+// spdlog
 #include <spdlog/spdlog.h>
 
+// ImGUI
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_sdlrenderer.h>
 
+// SDL
 #include <SDL.h>
+
+// AltHack
+#include <althack/visuals/node.hpp>
+#include <althack/visuals/account_node.hpp>
 
 namespace althack {
 
@@ -60,6 +70,14 @@ class MainWindow {
   std::string getSdlVersionLinked() const;
 
  private:
+  //! \brief Reference to a node visual, alongside its current visual state.
+  typedef struct StatefulNode {
+    //! \brief Reference to the node visual
+    std::shared_ptr<visuals::Node> node;
+    //! \brief The drawing position of the node visual
+    ImVec2 position;
+  } StatefulNode;
+
   //! \brief Creates the main canvas widget based on the specified parameters.
   /*!
     \param identifier The string identifier of this widget.
@@ -67,6 +85,13 @@ class MainWindow {
     \param position The scroll position to use as drawing origin in canvas coordinates.
    */
   void canvas(const std::string& identifier, const ImVec2 size, const ImVec2 position);
+
+  //! \brief Adds a visual node element.
+  /*!
+    \param node The node instance to add.
+    \param position The canvas coordinates this node is positioned at initially.
+   */
+  void addNode(std::shared_ptr<visuals::Node> node, const ImVec2& position);
 
   //! \brief Renders the root window.
   /*!
@@ -86,6 +111,9 @@ class MainWindow {
 
   //! \brief The canvas position when dragging started.
   ImVec2 drag_start_position_;
+
+  //! \brief List of node visuals to draw, alongside their state data.
+  std::vector<StatefulNode> nodes_;
 };
 
 }  // namespace althack
