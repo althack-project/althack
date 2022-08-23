@@ -9,6 +9,7 @@ namespace althack {
 MainWindow::MainWindow()
   : window_{nullptr}
   , renderer_{nullptr} {
+  addNode(std::make_shared<visuals::Node>("node"), ImVec2(0, 0));//100, 50));
 }
 
 bool MainWindow::setup(const std::string& title, uint32_t width, uint32_t height) {
@@ -69,6 +70,7 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
 
   const ImGuiID id = window->GetID(identifier.c_str());
   const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size);
+  ImGui::PushClipRect(bb.Min, bb.Max, false);
   ImGuiContext& g = *GImGui;
   ImGui::ItemSize(size, g.Style.FramePadding.y);
   if (!ImGui::ItemAdd(bb, id))
@@ -129,6 +131,15 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
     draw_list->AddLine(startn, endn, row % substeps_rows == 0 ? grid_col_major : grid_col_minor);
   }
 
+  // Draw nodes
+  const ImU32 col_fill = ImGui::ColorConvertFloat4ToU32(ImVec4(0.3, 0.1, 0.5, 1.0));
+  const ImVec2 nd_size(200, 50);
+  for (const StatefulNode& node : nodes_) {
+    const ImVec2 nd_min = size / 2.0 + bb.Min + position + node.position - nd_size / 2.0;
+    const ImVec2 nd_max = nd_min + nd_size;
+    draw_list->AddRectFilled(nd_min, nd_max, col_fill, 0.3f);
+  }
+
   // Handle UI interaction
   if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
     const ImVec2 clicked_pos = ImGui::GetIO().MouseClickedPos[0];
@@ -139,7 +150,13 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
     drag_start_position_ = canvas_position_;
   }
 
+  ImGui::PopClipRect();
+
   IMGUI_TEST_ENGINE_ITEM_INFO(id, identifier.c_str(), g.LastItemData.StatusFlags);
+}
+
+void MainWindow::addNode(std::shared_ptr<visuals::Node> node, const ImVec2& position) {
+  nodes_.push_back({node, position});
 }
 
 void MainWindow::rootWindow() {
