@@ -1,6 +1,6 @@
 #include <althack/main_window.hpp>
 
-#include <iostream>
+#include <map>
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 
@@ -11,8 +11,8 @@ MainWindow::MainWindow()
   , renderer_{nullptr}
   , was_dragging_{false}
   , dragged_node_{nullptr} {
-  addNode(std::make_shared<visuals::AccountNode>("node1"), ImVec2(0, 0));
-  addNode(std::make_shared<visuals::AccountNode>("node2"), ImVec2(250, 75));
+  addNode(std::make_shared<visuals::AccountNode>("node1", "rainforest", "acc123", 100.0, "$"), ImVec2(0, 0));
+  addNode(std::make_shared<visuals::AccountNode>("node2", "paybuddy", "acc@pb.domain", 52.75, "EUR"), ImVec2(250, 75));
 }
 
 bool MainWindow::setup(const std::string& title, uint32_t width, uint32_t height) {
@@ -153,51 +153,60 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
   // Draw nodes
   for (const StatefulNode& node : nodes_) {
     const ImVec2 node_position = size / 2.0 + bb.Min + position + node.position;
+    // Check if the node is currently visible, based on its position and size.
+    // If not, don't draw it.
+    if (!bb.Overlaps(ImRect(node_position - node.node->size() / 2.0,
+                            node_position + node.node->size() / 2.0))) {
+      continue;
+    }
+
     const bool hovered = hovered_node_ != nullptr && hovered_node_->node == node.node;
     node.node->draw(node_position, hovered, node.dragged);
   }
 
-  // Handle UI interaction
-  if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-    const ImVec2 clicked_pos = ImGui::GetIO().MouseClickedPos[0];
+  if (ImGui::IsWindowFocused()) {
+    // Handle UI interaction
+    if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+      const ImVec2 clicked_pos = ImGui::GetIO().MouseClickedPos[0];
 
-    if (!was_dragging_) {
-      // Check if we need to start dragging a node or the canvas.
-      for (std::list<StatefulNode>::iterator node_iter = nodes_.begin();
-           node_iter != nodes_.end(); ++node_iter) {
-        StatefulNode& node = *node_iter;
-        if (!(hovered_node_ != nullptr && hovered_node_->node == node.node)) {
-          continue;
+      if (!was_dragging_) {
+        // Check if we need to start dragging a node or the canvas.
+        for (std::list<StatefulNode>::iterator node_iter = nodes_.begin();
+             node_iter != nodes_.end(); ++node_iter) {
+          StatefulNode& node = *node_iter;
+          if (!(hovered_node_ != nullptr && hovered_node_->node == node.node)) {
+            continue;
+          }
+
+          dragged_node_ = &node;
+          dragged_node_->dragged = true;
+          drag_start_position_ = node.position;
+
+          // Move node to end of list (to draw it on top of everything else).
+          nodes_.splice(nodes_.end(), nodes_, node_iter);
+          break;
+        }
+      }
+
+      if (bb.Contains(clicked_pos)) {
+        if (dragged_node_ == nullptr) {
+          // Dragging the canvas.
+          canvas_position_ = drag_start_position_ + ImGui::GetMouseDragDelta();
+        } else {
+          // Dragging a node.
+          dragged_node_->position = drag_start_position_ + ImGui::GetMouseDragDelta();
         }
 
-        dragged_node_ = &node;
-        dragged_node_->dragged = true;
-        drag_start_position_ = node.position;
-
-        // Move node to end of list (to draw it on top of everything else).
-        nodes_.splice(nodes_.end(), nodes_, node_iter);
-        break;
+        was_dragging_ = true;
       }
-    }
-
-    if (bb.Contains(clicked_pos)) {
-      if (dragged_node_ == nullptr) {
-        // Dragging the canvas.
-        canvas_position_ = drag_start_position_ + ImGui::GetMouseDragDelta();
-      } else {
-        // Dragging a node.
-        dragged_node_->position = drag_start_position_ + ImGui::GetMouseDragDelta();
+    } else {
+      drag_start_position_ = canvas_position_;
+      was_dragging_ = false;
+      if (dragged_node_ != nullptr) {
+        dragged_node_->dragged = false;
       }
-
-      was_dragging_ = true;
+      dragged_node_ = nullptr;
     }
-  } else {
-    drag_start_position_ = canvas_position_;
-    was_dragging_ = false;
-    if (dragged_node_ != nullptr) {
-      dragged_node_->dragged = false;
-    }
-    dragged_node_ = nullptr;
   }
 
   ImGui::PopClipRect();
@@ -230,6 +239,33 @@ void MainWindow::rootWindow() {
   canvas("play_area", ImVec2(window_size.x, window_size.y - window->DC.CursorPos.y - 4.0f),
          canvas_position_);
   ImGui::End();
+
+  const ImVec2 accounts_window_size(150.0f, 300.0f);
+  ImGui::SetNextWindowPos(ImVec2(10.0f, window_size.y - accounts_window_size.y - 12.0f));
+  ImGui::SetNextWindowSize(accounts_window_size);
+  ImGui::Begin("Accounts", nullptr,
+               ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
+               ImGuiWindowFlags_NoCollapse);
+  std::map<std::string, std::list<std::shared_ptr<visuals::AccountNode>>> accounts;
+  for (const StatefulNode& node : nodes_) {
+    std::shared_ptr<visuals::AccountNode> account_node = std::dynamic_pointer_cast<visuals::AccountNode>(node.node);
+    if (account_node != nullptr) {
+      accounts[account_node->getProvider()].push_back(account_node);
+    }
+  }
+
+  for (const std::pair<std::string, std::list<std::shared_ptr<visuals::AccountNode>>>& pair : accounts) {
+    if (ImGui::TreeNode(pair.first.c_str())) {
+      for (std::shared_ptr<visuals::AccountNode> account : pair.second) {
+        ImGui::BeginGroup();
+        ImGui::Text("%s", account->getAccount().c_str());
+        ImGui::EndGroup();
+      }
+      ImGui::TreePop();
+      ImGui::Separator();
+    }
+  }
+  ImGui::End();  
 }
 
 bool MainWindow::render() {
