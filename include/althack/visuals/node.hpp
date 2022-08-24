@@ -17,9 +17,11 @@ class Node {
 
   const std::string& getIdentifier() const;
 
-  virtual void draw(const ImVec2 position) = 0;
+  virtual void draw(const ImVec2 position, bool hovered, bool dragged) = 0;
 
   virtual ImVec2 size() const = 0;
+
+  virtual bool hit(const ImVec2 node_position, const ImVec2 hit_position) const = 0;
 
  private:
   const std::string identifier_;

@@ -2,9 +2,9 @@
 #define ALTHACK_MAINWINDOW_HPP_
 
 // Standard
+#include <list>
 #include <memory>
 #include <string>
-#include <vector>
 
 // spdlog
 #include <spdlog/spdlog.h>
@@ -76,6 +76,7 @@ class MainWindow {
     std::shared_ptr<visuals::Node> node;
     //! \brief The drawing position of the node visual
     ImVec2 position;
+    bool dragged;
   } StatefulNode;
 
   //! \brief Creates the main canvas widget based on the specified parameters.
@@ -112,8 +113,14 @@ class MainWindow {
   //! \brief The canvas position when dragging started.
   ImVec2 drag_start_position_;
 
+  bool was_dragging_;
+
+  StatefulNode* dragged_node_;
+
+  StatefulNode* hovered_node_;
+
   //! \brief List of node visuals to draw, alongside their state data.
-  std::vector<StatefulNode> nodes_;
+  std::list<StatefulNode> nodes_;
 };
 
 }  // namespace althack

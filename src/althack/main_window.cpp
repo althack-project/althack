@@ -8,8 +8,11 @@ namespace althack {
 
 MainWindow::MainWindow()
   : window_{nullptr}
-  , renderer_{nullptr} {
-  addNode(std::make_shared<visuals::AccountNode>("node"), ImVec2(0, 0));
+  , renderer_{nullptr}
+  , was_dragging_{false}
+  , dragged_node_{nullptr} {
+  addNode(std::make_shared<visuals::AccountNode>("node1"), ImVec2(0, 0));
+  addNode(std::make_shared<visuals::AccountNode>("node2"), ImVec2(250, 75));
 }
 
 bool MainWindow::setup(const std::string& title, uint32_t width, uint32_t height) {
@@ -131,19 +134,70 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
     draw_list->AddLine(startn, endn, row % substeps_rows == 0 ? grid_col_major : grid_col_minor);
   }
 
+  // Find out which node is hovered, if any
+  hovered_node_ = nullptr;
+  const ImVec2 mouse_position = ImGui::GetMousePos();
+  for (std::list<StatefulNode>::reverse_iterator node_iter = nodes_.rbegin();
+       node_iter != nodes_.rend(); ++node_iter) {
+    StatefulNode& node = *node_iter;
+    const ImVec2 node_position = size / 2.0 + bb.Min + position + node.position;
+    // Only one node is hovered at all times.
+    const bool hovered = hovered_node_ == nullptr && node.node->hit(node_position, mouse_position);
+
+    if (hovered) {
+      hovered_node_ = &node;
+      break;
+    }
+  }
+
   // Draw nodes
   for (const StatefulNode& node : nodes_) {
-    node.node->draw(size / 2.0 + bb.Min + position + node.position);
+    const ImVec2 node_position = size / 2.0 + bb.Min + position + node.position;
+    const bool hovered = hovered_node_ != nullptr && hovered_node_->node == node.node;
+    node.node->draw(node_position, hovered, node.dragged);
   }
 
   // Handle UI interaction
   if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
     const ImVec2 clicked_pos = ImGui::GetIO().MouseClickedPos[0];
+
+    if (!was_dragging_) {
+      // Check if we need to start dragging a node or the canvas.
+      for (std::list<StatefulNode>::iterator node_iter = nodes_.begin();
+           node_iter != nodes_.end(); ++node_iter) {
+        StatefulNode& node = *node_iter;
+        if (!(hovered_node_ != nullptr && hovered_node_->node == node.node)) {
+          continue;
+        }
+
+        dragged_node_ = &node;
+        dragged_node_->dragged = true;
+        drag_start_position_ = node.position;
+
+        // Move node to end of list (to draw it on top of everything else).
+        nodes_.splice(nodes_.end(), nodes_, node_iter);
+        break;
+      }
+    }
+
     if (bb.Contains(clicked_pos)) {
-      canvas_position_ = drag_start_position_ + ImGui::GetMouseDragDelta();
+      if (dragged_node_ == nullptr) {
+        // Dragging the canvas.
+        canvas_position_ = drag_start_position_ + ImGui::GetMouseDragDelta();
+      } else {
+        // Dragging a node.
+        dragged_node_->position = drag_start_position_ + ImGui::GetMouseDragDelta();
+      }
+
+      was_dragging_ = true;
     }
   } else {
     drag_start_position_ = canvas_position_;
+    was_dragging_ = false;
+    if (dragged_node_ != nullptr) {
+      dragged_node_->dragged = false;
+    }
+    dragged_node_ = nullptr;
   }
 
   ImGui::PopClipRect();
