@@ -32,8 +32,16 @@ class AccountNode : public Node {
    */
   void setAmount(double amount);
 
+  //! \brief Returns the provider identifier string.
+  /*!
+    \returns The string value denoting which provider this account associates to.
+   */
   const std::string& getProvider() const;
 
+  //! \brief Returns the account identifier string.
+  /*!
+    \returns The string value denoting the account at the specified provider.
+   */
   const std::string& getAccount() const;
 
  private:
