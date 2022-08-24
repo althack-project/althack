@@ -12,9 +12,11 @@ class AccountNode : public Node {
  public:
   AccountNode(const std::string& identifier);
 
-  void draw(const ImVec2 position) override;
+  void draw(const ImVec2 position, bool hovered, bool dragged) override;
 
   ImVec2 size() const override;
+
+  bool hit(const ImVec2 node_position, const ImVec2 hit_position) const override;
 };
 
 }  // namespace visuals

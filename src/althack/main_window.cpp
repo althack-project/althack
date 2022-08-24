@@ -8,7 +8,9 @@ namespace althack {
 
 MainWindow::MainWindow()
   : window_{nullptr}
-  , renderer_{nullptr} {
+  , renderer_{nullptr}
+  , was_dragging_{false}
+  , dragged_node_{nullptr} {
   addNode(std::make_shared<visuals::AccountNode>("node"), ImVec2(0, 0));
 }
 
@@ -132,18 +134,50 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
   }
 
   // Draw nodes
+  const ImVec2 mouse_position = ImGui::GetMousePos();
   for (const StatefulNode& node : nodes_) {
-    node.node->draw(size / 2.0 + bb.Min + position + node.position);
+    const ImVec2 node_position = size / 2.0 + bb.Min + position + node.position;
+    const bool hovered = node.node->hit(node_position, mouse_position);
+    node.node->draw(node_position, hovered, node.dragged);
   }
 
   // Handle UI interaction
   if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
     const ImVec2 clicked_pos = ImGui::GetIO().MouseClickedPos[0];
+
+    if (!was_dragging_) {
+      // Check if we need to start dragging a node or the canvas.
+      const ImVec2 mouse_position = ImGui::GetMousePos();
+      for (StatefulNode& node : nodes_) {
+        const ImVec2 node_position = size / 2.0 + bb.Min + position + node.position;
+        const bool hovered = node.node->hit(node_position, mouse_position);
+        if (hovered) {
+          dragged_node_ = &node;
+          dragged_node_->dragged = true;
+          drag_start_position_ = node.position;
+          break;
+        }
+      }
+    }
+
     if (bb.Contains(clicked_pos)) {
-      canvas_position_ = drag_start_position_ + ImGui::GetMouseDragDelta();
+      if (dragged_node_ == nullptr) {
+        // Dragging the canvas.
+        canvas_position_ = drag_start_position_ + ImGui::GetMouseDragDelta();
+      } else {
+        // Dragging a node.
+        dragged_node_->position = drag_start_position_ + ImGui::GetMouseDragDelta();
+      }
+
+      was_dragging_ = true;
     }
   } else {
     drag_start_position_ = canvas_position_;
+    was_dragging_ = false;
+    if (dragged_node_ != nullptr) {
+      dragged_node_->dragged = false;
+    }
+    dragged_node_ = nullptr;
   }
 
   ImGui::PopClipRect();
