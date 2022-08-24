@@ -54,7 +54,9 @@ add_executable(${PROJECT_NAME}-bin
   src/main.cpp
   src/althack/main_window.cpp
   src/althack/backend.cpp
-  src/althack/backends/server_backend.cpp)
+  src/althack/backends/server_backend.cpp
+  src/althack/visuals/node.cpp
+  src/althack/visuals/account_node.cpp)
 
 target_link_libraries(${PROJECT_NAME}
   imgui

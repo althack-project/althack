@@ -1,15 +1,25 @@
 #ifndef ALTHACK_MAINWINDOW_HPP_
 #define ALTHACK_MAINWINDOW_HPP_
 
+// Standard
+#include <list>
+#include <memory>
 #include <string>
 
+// spdlog
 #include <spdlog/spdlog.h>
 
+// ImGui
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_sdlrenderer.h>
 
+// SDL
 #include <SDL.h>
+
+// AltHack
+#include <althack/visuals/node.hpp>
+#include <althack/visuals/account_node.hpp>
 
 namespace althack {
 
@@ -31,35 +41,55 @@ class MainWindow {
     \param width The window width in pixels.
     \param height The window height in pixels.
     \sa teardown()
+    \returns A boolean flag denoting whether the setup was completed successfully.
    */
   bool setup(const std::string& title, uint32_t width, uint32_t height);
 
   //! \brief Processes high level I/O signals to allow window interaction.
+  /*!
+    \returns A boolean flag denoting whether I/O was processed successfully.
+   */
   bool processIo();
 
   //! \brief Renders this window instance based on its current state.
+  /*!
+    \returns A boolean flag denoting whether rendering was processed successfully.
+   */
   bool render();
 
   //! \brief Tears down this window instance.
   /*!
     Internal clean-up mechanisms are executed to ensure a clean teardown.
     \sa setup()
+    \returns A boolean flag denoting whether teardown was processed successfully.
    */
   bool teardown();
 
   //! \brief Returns the semantic version string of the compiled SDL libraries.
   /*!
     \sa getSdlVersionLinked()
+    \returns A string representation of the semantic SDL version (compile version).
    */
   std::string getSdlVersionCompiled() const;
 
   //! \brief Returns the semantic version string of the linked SDL libraries.
   /*!
     \sa getSdlVersionCompiled()
+    \returns A string representation of the semantic SDL version (link version).
    */
   std::string getSdlVersionLinked() const;
 
  private:
+  //! \brief Reference to a node visual, alongside its current visual state.
+  typedef struct StatefulNode {
+    //! \brief Reference to the node visual
+    std::shared_ptr<visuals::Node> node;
+    //! \brief The drawing position of the node visual
+    ImVec2 position;
+    //! \brief Denotes whether the node is currently being dragged
+    bool dragged;
+  } StatefulNode;
+
   //! \brief Creates the main canvas widget based on the specified parameters.
   /*!
     \param identifier The string identifier of this widget.
@@ -67,6 +97,13 @@ class MainWindow {
     \param position The scroll position to use as drawing origin in canvas coordinates.
    */
   void canvas(const std::string& identifier, const ImVec2 size, const ImVec2 position);
+
+  //! \brief Adds a visual node element.
+  /*!
+    \param node The node instance to add.
+    \param position The canvas coordinates this node is positioned at initially.
+   */
+  void addNode(std::shared_ptr<visuals::Node> node, const ImVec2& position);
 
   //! \brief Renders the root window.
   /*!
@@ -86,6 +123,18 @@ class MainWindow {
 
   //! \brief The canvas position when dragging started.
   ImVec2 drag_start_position_;
+
+  //! \brief Denotes whether an element was being dragged in the past frame.
+  bool was_dragging_;
+
+  //! \brief Stores a pointer to the currently dragged node.
+  StatefulNode* dragged_node_;
+
+  //! \brief Stores a pointer to the currently hovered node.
+  StatefulNode* hovered_node_;
+
+  //! \brief List of node visuals to draw, alongside their state data.
+  std::list<StatefulNode> nodes_;
 };
 
 }  // namespace althack
