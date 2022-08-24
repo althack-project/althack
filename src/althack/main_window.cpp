@@ -11,8 +11,8 @@ MainWindow::MainWindow()
   , renderer_{nullptr}
   , was_dragging_{false}
   , dragged_node_{nullptr} {
-  addNode(std::make_shared<visuals::AccountNode>("node1"), ImVec2(0, 0));
-  addNode(std::make_shared<visuals::AccountNode>("node2"), ImVec2(250, 75));
+  addNode(std::make_shared<visuals::AccountNode>("node1", "rainforest", "acc123", 100.0, "$"), ImVec2(0, 0));
+  addNode(std::make_shared<visuals::AccountNode>("node2", "paybuddy", "acc@pb.domain", 52.75, "EUR"), ImVec2(250, 75));
 }
 
 bool MainWindow::setup(const std::string& title, uint32_t width, uint32_t height) {

@@ -10,13 +10,40 @@ namespace visuals {
 //! \brief Funds holding account node class.
 class AccountNode : public Node {
  public:
-  AccountNode(const std::string& identifier);
+  //! \brief Initializes this instance.
+  /*!
+    \param identifier The internal string identifier, passed to the Node superclass.
+    \param provider The provider identifier for the provider that holds this account.
+    \param account The account identifier at the provider.
+    \param amount The initial funds amount held by this account.
+    \param currency The currency identifier for this account.
+   */
+  AccountNode(
+      const std::string& identifier, const std::string& provider,
+      const std::string& account, double amount, const std::string& currency);
 
   void draw(const ImVec2 position, bool hovered, bool dragged) override;
 
   ImVec2 size() const override;
 
-  bool hit(const ImVec2 node_position, const ImVec2 hit_position) const override;
+  //! \brief Sets the amount this visual node displays.
+  /*!
+    \param amount The currency amount to display for this account node.
+   */
+  void setAmount(double amount);
+
+ private:
+  //! \brief The provider identifier for the provider that holds this account.
+  const std::string provider_;
+
+  //! \brief The account identifier at the provider.
+  const std::string account_;
+
+  //! \brief The initial funds amount held by this account.
+  const std::string currency_;
+
+  //! \brief The currency identifier for this account.
+  double amount_;
 };
 
 }  // namespace visuals
