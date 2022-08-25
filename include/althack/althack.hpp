@@ -2,6 +2,7 @@
 #define ALTHACK_ALTHACK_HPP_
 
 // Standard
+#include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <iostream>
@@ -48,6 +49,8 @@ class AltHack {
   void setHeadless(bool headless);
 
  private:
+  void backendWorker(std::atomic<bool>& run_flag);
+
   Configuration configuration_;
   MainWindow main_window_;
 

@@ -1,5 +1,7 @@
 #include <althack/backends/server_backend.hpp>
 
+#include <iostream>
+
 namespace althack {
 namespace backends {
 
