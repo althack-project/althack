@@ -1,5 +1,7 @@
 #include <althack/althack.hpp>
 
+#include <chrono>
+
 namespace althack {
 
 AltHack::AltHack()
@@ -30,6 +32,12 @@ bool AltHack::run() {
   std::unique_lock<std::mutex> lock(run_mutex_);
   should_run_ = true;
 
+  // Start backend thread
+  std::atomic<bool> run_backend = true;
+  spdlog::info("Startung backend worker thread");
+  std::thread backend_thread(&AltHack::backendWorker, this, std::ref(run_backend));
+
+  // Run frontend loop
   while (run_cv_.wait_for(lock, 1ms, [&]{ return should_run_; })) {
     if (!headless_) {
       const bool goon = main_window_.processIo();
@@ -38,10 +46,11 @@ bool AltHack::run() {
       }
       main_window_.render();
     }
-    backend_->step();
-
-    // TODO: Do headless things here.
   }
+
+  spdlog::info("Tearing down backend worker thread");
+  run_backend = false;
+  backend_thread.join();
 
   std::cout << "\r";  // Move cursor back to line beginning after potential CTRL-C (to avoid ^C).
   spdlog::info("Mainloop exit requested");
@@ -71,6 +80,23 @@ std::string AltHack::getVersion() const {
 
 void AltHack::setHeadless(bool headless) {
   headless_ = headless;
+}
+
+void AltHack::backendWorker(std::atomic<bool>& run_flag) {
+  if (!headless_) {
+    // Set initial values from backend cache.
+    main_window_.setAccounts(backend_->getAccounts());
+  }
+
+  using namespace std::chrono_literals;
+  while (run_flag) {
+    backend_->step();
+    std::this_thread::sleep_for(1ms);
+
+    if (!headless_) {
+      // TODO(fairlight1337): Perform UI work.
+    }
+  }
 }
 
 }  // namespace althack

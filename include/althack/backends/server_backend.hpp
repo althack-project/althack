@@ -5,14 +5,17 @@
 
 namespace althack {
 namespace backends {
-  
+
 class ServerBackend : public Backend {
  public:
   ServerBackend();
 
   void step() override;
 
+  const std::list<visuals::AccountNode> getAccounts() override;
+
  private:
+  std::list<visuals::AccountNode> accounts_cache_;
 };
 
 }  // namespace backends
