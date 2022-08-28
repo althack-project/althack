@@ -79,6 +79,8 @@ class MainWindow {
    */
   std::string getSdlVersionLinked() const;
 
+  void setAccounts(const std::list<visuals::AccountNode>& accounts);
+
  private:
   //! \brief Reference to a node visual, alongside its current visual state.
   typedef struct StatefulNode {

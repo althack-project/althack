@@ -11,8 +11,6 @@ MainWindow::MainWindow()
   , renderer_{nullptr}
   , was_dragging_{false}
   , dragged_node_{nullptr} {
-  addNode(std::make_shared<visuals::AccountNode>("node1", "rainforest", "acc123", 100.0, "$"), ImVec2(0, 0));
-  addNode(std::make_shared<visuals::AccountNode>("node2", "paybuddy", "acc@pb.domain", 52.75, "EUR"), ImVec2(250, 75));
 }
 
 bool MainWindow::setup(const std::string& title, uint32_t width, uint32_t height) {
@@ -265,7 +263,7 @@ void MainWindow::rootWindow() {
       ImGui::Separator();
     }
   }
-  ImGui::End();  
+  ImGui::End();
 }
 
 bool MainWindow::render() {
@@ -321,6 +319,14 @@ std::string MainWindow::getSdlVersionLinked() const {
     std::to_string(version.major) + "." +
     std::to_string(version.minor) + "." +
     std::to_string(version.patch);
+}
+
+void MainWindow::setAccounts(const std::list<visuals::AccountNode>& accounts) {
+  for (const visuals::AccountNode& account : accounts) {
+    addNode(std::make_shared<visuals::AccountNode>(
+        account.getIdentifier(), account.getProvider(), account.getAccount(),
+        account.getAmount(), account.getCurrency()), ImVec2(0.0f, 0.0f));
+  }
 }
 
 }  // namespace althack

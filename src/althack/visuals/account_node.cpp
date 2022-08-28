@@ -60,5 +60,13 @@ const std::string& AccountNode::getAccount() const {
   return account_;
 }
 
+const std::string& AccountNode::getCurrency() const {
+  return currency_;
+}
+
+double AccountNode::getAmount() const {
+  return amount_;
+}
+
 }  // namespace visuals
 }  // namespace althack

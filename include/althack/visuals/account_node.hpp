@@ -44,6 +44,10 @@ class AccountNode : public Node {
    */
   const std::string& getAccount() const;
 
+  const std::string& getCurrency() const;
+
+  double getAmount() const;
+
  private:
   //! \brief The provider identifier for the provider that holds this account.
   const std::string provider_;
