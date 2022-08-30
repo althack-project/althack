@@ -96,9 +96,8 @@ class MainWindow {
   /*!
     \param identifier The string identifier of this widget.
     \param size The size of this widget in pixels.
-    \param position The scroll position to use as drawing origin in canvas coordinates.
    */
-  void canvas(const std::string& identifier, const ImVec2 size, const ImVec2 position);
+  void canvas(const std::string& identifier, const ImVec2 size);
 
   //! \brief Adds a visual node element.
   /*!

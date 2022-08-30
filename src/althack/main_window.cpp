@@ -64,7 +64,7 @@ bool MainWindow::processIo() {
   return true;
 }
 
-void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const ImVec2 position) {
+void MainWindow::canvas(const std::string& identifier, const ImVec2 size) {
   ImGuiWindow* window = ImGui::GetCurrentWindow();
   if (window->SkipItems)
     return;
@@ -95,10 +95,10 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
   const uint32_t rows = ((bb.Max - bb.Min).y / (stride_rows / static_cast<float>(substeps_rows))) + 2 * substeps_rows;
   const uint32_t cols = ((bb.Max - bb.Min).x / (stride_cols / static_cast<float>(substeps_cols))) + 2 * substeps_cols;
 
-  float draw_position_x = position.x;
+  float draw_position_x = canvas_position_.x;
   while (draw_position_x >= stride_cols) { draw_position_x -= stride_cols; }
   while (draw_position_x <= -stride_cols) { draw_position_x += stride_cols; }
-  float draw_position_y = position.y;
+  float draw_position_y = canvas_position_.y;
   while (draw_position_y >= stride_rows) { draw_position_y -= stride_rows; }
   while (draw_position_y <= stride_rows) { draw_position_y += stride_rows; }
 
@@ -138,7 +138,7 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
   for (std::list<StatefulNode>::reverse_iterator node_iter = nodes_.rbegin();
        node_iter != nodes_.rend(); ++node_iter) {
     StatefulNode& node = *node_iter;
-    const ImVec2 node_position = size / 2.0 + bb.Min + position + node.position;
+    const ImVec2 node_position = size / 2.0 + bb.Min + canvas_position_ + node.position;
     // Only one node is hovered at all times.
     const bool hovered = hovered_node_ == nullptr && node.node->hit(node_position, mouse_position);
 
@@ -150,7 +150,7 @@ void MainWindow::canvas(const std::string& identifier, const ImVec2 size, const 
 
   // Draw nodes
   for (const StatefulNode& node : nodes_) {
-    const ImVec2 node_position = size / 2.0 + bb.Min + position + node.position;
+    const ImVec2 node_position = size / 2.0 + bb.Min + canvas_position_ + node.position;
     // Check if the node is currently visible, based on its position and size.
     // If not, don't draw it.
     if (!bb.Overlaps(ImRect(node_position - node.node->size() / 2.0,
@@ -234,8 +234,7 @@ void MainWindow::rootWindow() {
   const ImVec2 window_size = ImGui::GetWindowSize();
   const ImGuiWindow* window = ImGui::GetCurrentWindow();
   ImGui::SetCursorPosX(0.0f);
-  canvas("play_area", ImVec2(window_size.x, window_size.y - window->DC.CursorPos.y - 4.0f),
-         canvas_position_);
+  canvas("play_area", ImVec2(window_size.x, window_size.y - window->DC.CursorPos.y - 4.0f));
   ImGui::End();
 
   const ImVec2 accounts_window_size(150.0f, 300.0f);
