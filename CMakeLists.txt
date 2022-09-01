@@ -70,17 +70,3 @@ target_link_libraries(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}-bin
   ${PROJECT_NAME})
-
-# Doxygen Documentation
-find_package(Doxygen
-  REQUIRED dot)
-
-set(DOXYGEN_GENERATE_HTML YES)
-set(DOXYGEN_GENERATE_MAN NO)
-
-set(DOXYGEN_PROJECT_BRIEF "${PROJECT_NAME}")
-doxygen_add_docs(
-  doxygen
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_SOURCE_DIR}/include
-  COMMENT "Generate source code documentation")
