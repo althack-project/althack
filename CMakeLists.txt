@@ -19,6 +19,11 @@ set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -Wall -O3 -fPIC" )
 
 set(THIRDPARTY_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+
+# Project subdirectories
+add_subdirectory("docs")
+
 # libconfig cmake switches
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -65,17 +70,3 @@ target_link_libraries(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}-bin
   ${PROJECT_NAME})
-
-# Doxygen Documentation
-find_package(Doxygen
-  REQUIRED dot)
-
-set(DOXYGEN_GENERATE_HTML YES)
-set(DOXYGEN_GENERATE_MAN NO)
-
-set(DOXYGEN_PROJECT_BRIEF "${PROJECT_NAME}")
-doxygen_add_docs(
-  doxygen
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_SOURCE_DIR}/include
-  COMMENT "Generate source code documentation")
