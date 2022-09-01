@@ -25,19 +25,38 @@ How to Build
 ------------
 
 To build the main application, run the following:
-```bash
-git clone https://github.com/fairlight1337/althack
-mkdir build
-cd build
-cmake ..
-make
-```
+
+.. code-block:: bash
+
+    git clone https://github.com/fairlight1337/althack
+    mkdir build
+    cd build
+    cmake ..
+    make
 
 To build the documentation instead of the main application, change the `make` command to the following:
-```bash
-make documentation
-```
 
+.. code-block:: bash
+
+    make documentation
+
+The documentation can be found under ``build/docs/sphinx`` and ``build/docs/doxygen``, respectively.
+
+----------
+How to Run
+----------
+
+To run the main application file, run
+
+.. code-block:: bash
+
+    ./build/bin/althack-bin
+
+after building the main application. The main binary supports various command line options, which can be displayed via
+
+.. code-block:: bash
+
+    ./build/bin/althack-bin --help
 
 -------------------
 Development Roadmap
