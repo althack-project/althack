@@ -14,7 +14,7 @@ Stay tuned!
     :alt: build status
     :target: https://circleci.com/gh/fairlight1337/althack
 
-.. |docs| image:: https://circleci.com/gh/fairlight1337/althack
+.. |docs| image:: https://readthedocs.org/projects/althack-game/badge/?version=latest
     :alt: Documentation Status
     :scale: 100%
     :target: https://althack-game.readthedocs.io/en/latest/?badge=latest
