@@ -2,13 +2,22 @@
 AltHack
 =======
 
-.. image:: https://circleci.com/gh/fairlight1337/althack.svg?style=svg
-    :target: https://circleci.com/gh/fairlight1337/althack
+|build-status| |docs|
 
 This file will contain useful information about the AltHack project.
 Stay tuned!
 
 `AltHack Project Website <https://althack-game.com>`_ (WIP)
+
+
+.. |build-status| image:: https://circleci.com/gh/fairlight1337/althack.svg?style=svg
+    :alt: build status
+    :target: https://circleci.com/gh/fairlight1337/althack
+
+.. |docs| image:: https://circleci.com/gh/fairlight1337/althack
+    :alt: Documentation Status
+    :scale: 100%
+    :target: https://althack-game.readthedocs.io/en/latest/?badge=latest
 
 
 -------------------
