@@ -19,6 +19,7 @@ Stay tuned!
     :scale: 100%
     :target: https://althack-game.readthedocs.io/en/latest/?badge=latest
 
+The most up to date documentation can be found `here <https://althack-game.readthedocs.io/en/latest/>`_.
 
 ------------
 How to Build
