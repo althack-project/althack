@@ -64,7 +64,7 @@ jobs:
           name: Build
           command: |
             cd build
-            make doxygen
+            make documentation
       - persist_to_workspace:
           root: .
           paths:
