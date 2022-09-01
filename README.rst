@@ -20,6 +20,25 @@ Stay tuned!
     :target: https://althack-game.readthedocs.io/en/latest/?badge=latest
 
 
+------------
+How to Build
+------------
+
+To build the main application, run the following:
+```bash
+git clone https://github.com/fairlight1337/althack
+mkdir build
+cd build
+cmake ..
+make
+```
+
+To build the documentation instead of the main application, change the `make` command to the following:
+```bash
+make documentation
+```
+
+
 -------------------
 Development Roadmap
 -------------------
