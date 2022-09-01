@@ -19,6 +19,11 @@ set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -Wall -O3 -fPIC" )
 
 set(THIRDPARTY_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+
+# Project subdirectories
+add_subdirectory("docs")
+
 # libconfig cmake switches
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
