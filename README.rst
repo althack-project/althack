@@ -21,6 +21,10 @@ Stay tuned!
 
 The most up to date documentation can be found `here <https://althack-game.readthedocs.io/en/latest/>`_.
 
+.. image:: https://github.com/fairlight1337/althack/blob/45dfa213c379c123781dc645187bce6d9643c8bf/assets/20220901_althack_main_window.png
+  :width: 600
+  :alt: AltHack Main Window Screenshot
+
 ------------
 How to Build
 ------------
