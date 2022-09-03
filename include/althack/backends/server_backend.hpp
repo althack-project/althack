@@ -1,14 +1,19 @@
 #ifndef ALTHACK_BACKENDS_SERVER_BACKEND_HPP_
 #define ALTHACK_BACKENDS_SERVER_BACKEND_HPP_
 
+// Standard
+#include <memory>
+
+// AltHack
 #include <althack/backend.hpp>
+#include <althack/database.hpp>
 
 namespace althack {
 namespace backends {
 
 class ServerBackend : public Backend {
  public:
-  ServerBackend();
+  ServerBackend(const std::string& database_file);
 
   void step() override;
 
@@ -16,6 +21,9 @@ class ServerBackend : public Backend {
 
  private:
   std::list<visuals::AccountNode> accounts_cache_;
+
+  //! \brief The database instance to use for persistent storage.
+  std::unique_ptr<Database> database_;
 };
 
 }  // namespace backends
