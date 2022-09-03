@@ -28,10 +28,23 @@ add_subdirectory("docs")
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
+# SOCI cmake switches
+set(SOCI_STATIC OFF CACHE BOOL "" FORCE)
+set(SOCI_SHARED ON CACHE BOOL "" FORCE)
+set(SOCI_TESTS OFF CACHE BOOL "" FORCE)
+set(SOCI_EMPTY OFF CACHE BOOL "" FORCE)
+set(SOCI_MYSQL OFF CACHE BOOL "" FORCE)
+set(SOCI_FIREBIRD OFF CACHE BOOL "" FORCE)
+set(SOCI_ODBC OFF CACHE BOOL "" FORCE)
+set(SOCI_ORACLE OFF CACHE BOOL "" FORCE)
+set(SOCI_POSTGRESQL OFF CACHE BOOL "" FORCE)
+set(SOCI_DB2 OFF CACHE BOOL "" FORCE)
+
 # Add 3rdparty components
 add_subdirectory(${THIRDPARTY_DIR}/SDL)
 add_subdirectory(${THIRDPARTY_DIR}/libconfig)
 add_subdirectory(${THIRDPARTY_DIR}/spdlog)
+add_subdirectory(${THIRDPARTY_DIR}/soci)
 
 configure_file(include/althack/config.hpp.in include/althack/config.hpp)
 
@@ -42,7 +55,12 @@ include_directories(
   ${THIRDPARTY_DIR}/SDL/include
   ${THIRDPARTY_DIR}/libconfig/lib
   ${THIRDPARTY_DIR}/spdlog/include
+  ${THIRDPARTY_DIR}/soci/include
+  ${CMAKE_BINARY_DIR}/3rdparty/soci/include
   ${CMAKE_BINARY_DIR}/include)
+
+link_directories(
+  ${CMAKE_BINARY_DIR}/lib)
 
 add_library(imgui
   ${THIRDPARTY_DIR}/imgui/imgui.cpp
@@ -60,13 +78,17 @@ add_executable(${PROJECT_NAME}-bin
   src/althack/main_window.cpp
   src/althack/backend.cpp
   src/althack/backends/server_backend.cpp
+  src/althack/databases/soci_database.cpp
   src/althack/visuals/node.cpp
   src/althack/visuals/account_node.cpp)
 
 target_link_libraries(${PROJECT_NAME}
   imgui
   SDL2
-  config++)
+  config++
+  soci_core
+  soci_sqlite3
+  dl)
 
 target_link_libraries(${PROJECT_NAME}-bin
   ${PROJECT_NAME})

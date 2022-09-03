@@ -20,7 +20,7 @@ bool AltHack::setup() {
   }
 
   // TODO: Decide how server/client backend is determined.
-  backend_ = std::make_unique<backends::ServerBackend>();
+  backend_ = std::make_unique<backends::ServerBackend>("database.db");
 
   spdlog::info("Using backend: " + backend_->getIdentifier());
 
