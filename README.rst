@@ -10,9 +10,9 @@ Stay tuned!
 `AltHack Project Website <https://althack-game.com>`_ (WIP)
 
 
-.. |build-status| image:: https://circleci.com/gh/fairlight1337/althack.svg?style=svg
+.. |build-status| image:: https://circleci.com/gh/althack-project/althack.svg?style=svg
     :alt: build status
-    :target: https://circleci.com/gh/fairlight1337/althack
+    :target: https://circleci.com/gh/althack-project/althack
 
 .. |docs| image:: https://readthedocs.org/projects/althack-game/badge/?version=latest
     :alt: Documentation Status
@@ -21,7 +21,7 @@ Stay tuned!
 
 The most up to date documentation can be found `here <https://althack-game.readthedocs.io/en/latest/>`_.
 
-.. image:: https://github.com/fairlight1337/althack/blob/45dfa213c379c123781dc645187bce6d9643c8bf/assets/20220901_althack_main_window.png
+.. image:: https://github.com/althack-project/althack/raw/main/assets/20220901_althack_main_window.png
   :width: 600
   :alt: AltHack Main Window Screenshot
 
@@ -33,7 +33,7 @@ To build the main application, run the following:
 
 .. code-block:: bash
 
-    git clone https://github.com/fairlight1337/althack
+    git clone https://github.com/althack-project/althack
     mkdir build
     cd build
     cmake ..
