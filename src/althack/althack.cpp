@@ -20,7 +20,7 @@ bool AltHack::setup() {
   }
 
   // TODO: Decide how server/client backend is determined.
-  backend_ = std::make_unique<backends::ServerBackend>();
+  backend_ = std::make_unique<backends::ServerBackend>("database.db");
 
   spdlog::info("Using backend: " + backend_->getIdentifier());
 
@@ -34,7 +34,7 @@ bool AltHack::run() {
 
   // Start backend thread
   std::atomic<bool> run_backend = true;
-  spdlog::info("Startung backend worker thread");
+  spdlog::info("Starting backend worker thread");
   std::thread backend_thread(&AltHack::backendWorker, this, std::ref(run_backend));
 
   // Run frontend loop
