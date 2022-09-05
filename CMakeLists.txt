@@ -78,6 +78,7 @@ add_executable(${PROJECT_NAME}-bin
   src/althack/main_window.cpp
   src/althack/backend.cpp
   src/althack/backends/server_backend.cpp
+  src/althack/database.cpp
   src/althack/databases/soci_database.cpp
   src/althack/visuals/node.cpp
   src/althack/visuals/account_node.cpp)

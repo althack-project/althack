@@ -3,6 +3,7 @@
 
 // Standard
 #include <memory>
+#include <string>
 
 // AltHack
 #include <althack/backend.hpp>
@@ -14,6 +15,8 @@ namespace backends {
 class ServerBackend : public Backend {
  public:
   ServerBackend(const std::string& database_file);
+
+  ~ServerBackend();
 
   void step() override;
 

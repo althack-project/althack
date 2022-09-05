@@ -34,7 +34,7 @@ bool AltHack::run() {
 
   // Start backend thread
   std::atomic<bool> run_backend = true;
-  spdlog::info("Startung backend worker thread");
+  spdlog::info("Starting backend worker thread");
   std::thread backend_thread(&AltHack::backendWorker, this, std::ref(run_backend));
 
   // Run frontend loop

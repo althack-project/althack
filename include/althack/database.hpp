@@ -1,6 +1,9 @@
 #ifndef ALTHACK_DATABASE_HPP_
 #define ALTHACK_DATABASE_HPP_
 
+// Standard
+#include <string>
+
 namespace althack {
 
 //! \brief Abstract base class for persistent database classes
@@ -9,6 +12,14 @@ namespace althack {
    instances. It needs to be subclassed to add actual functionality.
  */
 class Database {
+ public:
+  //! \brief Opens the database for reading/writing.
+  virtual bool open() = 0;
+  //! \brief Closes the database.
+  virtual bool close() = 0;
+
+ protected:
+  std::string getISO8601Timestamp() const;
 };
 
 }  // namespace althack

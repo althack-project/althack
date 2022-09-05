@@ -30,9 +30,15 @@ class SociDatabase : public Database {
    */
   SociDatabase(const std::string& database_file);
 
+  bool open() override;
+
+  bool close() override;
+
  private:
   //! \brief The database session to use.
   soci::session session_;
+  //! \brief The database file to use.
+  const std::string database_file_;
 };
 
 }  // namespace databases
