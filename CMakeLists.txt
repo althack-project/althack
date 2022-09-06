@@ -57,10 +57,12 @@ include_directories(
   ${THIRDPARTY_DIR}/spdlog/include
   ${THIRDPARTY_DIR}/soci/include
   ${CMAKE_BINARY_DIR}/3rdparty/soci/include
-  ${CMAKE_BINARY_DIR}/include)
+  ${CMAKE_BINARY_DIR}/include
+  ${CMAKE_BINARY_DIR}/openssl-build/usr/local/include)
 
 link_directories(
-  ${CMAKE_BINARY_DIR}/lib)
+  ${CMAKE_BINARY_DIR}/lib
+  ${CMAKE_BINARY_DIR}/openssl-build/usr/local/lib64)
 
 add_library(imgui
   ${THIRDPARTY_DIR}/imgui/imgui.cpp
@@ -90,7 +92,8 @@ target_link_libraries(${PROJECT_NAME}
   config++
   soci_core
   soci_sqlite3
-  dl)
+  dl
+  crypto)
 
 target_link_libraries(${PROJECT_NAME}-bin
   ${PROJECT_NAME})

@@ -6,6 +6,7 @@
 
 // Althack
 #include <althack/backend.hpp>
+#include <althack/crypto_service.hpp>
 
 namespace althack {
 
