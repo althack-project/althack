@@ -17,7 +17,7 @@ This document is work in progress at the moment. Its basic outline should give y
 
 ## Code of Conduct
 
-The Code of Conduct will be added shortly. It is currently being written, and I'm trying to ensure that it is concise and not too cluttered.
+To act as a friendly and welcoming community, every contributor or participant in the project is expected to adhere to our [Code of Conduct](https://github.com/althack-project/althack/blob/main/CODE_OF_CONDUCT.md). Please read it carefully to make sure you agree to the project's community standards and expectations.
 
 
 ## Before you get started
