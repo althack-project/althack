@@ -47,6 +47,20 @@ To build the documentation instead of the main application, change the `make` co
 
 The documentation can be found under ``build/docs/sphinx`` and ``build/docs/doxygen``, respectively.
 
+-----------------------------
+Cross Compilation for Windows
+-----------------------------
+
+The project can be built for Windows platforms. To cross-compile from a Linux host to a Windows target, run the following:
+
+.. code-block:: bash
+
+    git clone https://github.com/althack-project/althack
+    mkdir build
+    cd build
+    cmake -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ -DCMAKE_FIND_ROOT_PATH=/usr/i686-w64-mingw32 -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY -DWIN32=True ..
+    make
+
 ----------
 How to Run
 ----------
