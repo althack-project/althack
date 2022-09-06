@@ -18,6 +18,8 @@ class Frontend {
 
   const std::list<visuals::AccountNode> getAccounts();
 
+  bool createAccount(const std::string& username);
+
  private:
   std::shared_ptr<Backend> backend_;
 };

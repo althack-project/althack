@@ -9,6 +9,7 @@ namespace althack {
 
 class CryptoService {
  public:
+  static void generateKeyPair();
 };
 
 }  // namespace althack

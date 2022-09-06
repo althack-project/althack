@@ -10,6 +10,10 @@ void Frontend::step() {
   // TOOD: Implement frontend cycle work.
 }
 
+bool Frontend::createAccount(const std::string& username) {
+  CryptoService::generateKeyPair();
+}
+
 const std::list<visuals::AccountNode> Frontend::getAccounts() {
   return backend_->getAccounts();
 }
