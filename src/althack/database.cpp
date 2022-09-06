@@ -1,7 +1,8 @@
 #include <althack/database.hpp>
 
-#include <ctime>
+// Standard
 #include <chrono>
+#include <ctime>
 #include <iomanip>
 #include <sstream>
 
@@ -11,7 +12,7 @@ std::string Database::getISO8601Timestamp() const {
   const auto now = std::chrono::system_clock::now();
   const std::time_t time = std::chrono::system_clock::to_time_t(now);
   const std::tm* now_tm = std::localtime(&time);
-  const long long timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+  const int64 timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 
   std::stringstream sts;
   sts << std::setfill('0')

@@ -23,7 +23,7 @@ void signal_handler(int signal) { shutdown_handler(signal); }
 }  // namespace
 
 int main(int argc, char** argv) {
-  std::string config_path = "";
+  std::string config_path;
   bool headless = false;
 
   althack::AltHack instance;
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
   }
 
   std::signal(SIGINT, signal_handler);
-  shutdown_handler = [&](int signal) { instance.stop(); };
+  shutdown_handler = [&](int /*signal*/) { instance.stop(); };
 
   spdlog::info("Ready, entering main loop");
   if (instance.run()) {

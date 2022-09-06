@@ -11,8 +11,8 @@ ServerBackend::ServerBackend(const std::string& database_file)
   database_ = std::make_unique<databases::SociDatabase>(database_file);
   database_->open();
 
-  accounts_cache_.push_back(visuals::AccountNode("node1", "rainforest", "acc123", 100.0, "$"));
-  accounts_cache_.push_back(visuals::AccountNode("node2", "paybuddy", "acc@pb.domain", 52.75, "EUR"));
+  accounts_cache_.emplace_back("node1", "rainforest", "acc123", 100.0, "$");
+  accounts_cache_.emplace_back("node2", "paybuddy", "acc@pb.domain", 52.75, "EUR");
 }
 
 ServerBackend::~ServerBackend() {
