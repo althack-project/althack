@@ -20,6 +20,7 @@
 #include <althack/configuration.hpp>
 #include <althack/backend.hpp>
 #include <althack/backends/server_backend.hpp>
+#include <althack/frontend.hpp>
 #include <althack/main_window.hpp>
 
 namespace althack {
@@ -51,6 +52,8 @@ class AltHack {
  private:
   void backendWorker(std::atomic<bool>& run_flag);
 
+  void frontendWorker(std::atomic<bool>& run_flag);
+
   Configuration configuration_;
   MainWindow main_window_;
 
@@ -60,7 +63,8 @@ class AltHack {
 
   bool headless_;
 
-  std::unique_ptr<Backend> backend_;
+  std::shared_ptr<Backend> backend_;
+  Frontend frontend_;
 };
 
 }  // namespace althack
