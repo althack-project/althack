@@ -76,6 +76,7 @@ add_library(${PROJECT_NAME}
 add_executable(${PROJECT_NAME}-bin
   src/main.cpp
   src/althack/main_window.cpp
+  src/althack/frontend.cpp
   src/althack/backend.cpp
   src/althack/backends/server_backend.cpp
   src/althack/database.cpp

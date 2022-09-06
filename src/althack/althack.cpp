@@ -20,7 +20,8 @@ bool AltHack::setup() {
   }
 
   // TODO: Decide how server/client backend is determined.
-  backend_ = std::make_unique<backends::ServerBackend>("database.db");
+  backend_ = std::make_shared<backends::ServerBackend>("database.db");
+  frontend_.connect(backend_);
 
   spdlog::info("Using backend: " + backend_->getIdentifier());
 
@@ -37,6 +38,14 @@ bool AltHack::run() {
   spdlog::info("Starting backend worker thread");
   std::thread backend_thread(&AltHack::backendWorker, this, std::ref(run_backend));
 
+  std::atomic<bool> run_frontend = true;
+  std::thread frontend_thread;
+  if (!headless_) {
+    // Start frontend thread
+    spdlog::info("Starting frontend worker thread");
+    frontend_thread = std::thread(&AltHack::frontendWorker, this, std::ref(run_frontend));
+  }
+
   // Run frontend loop
   while (run_cv_.wait_for(lock, 1ms, [&]{ return should_run_; })) {
     if (!headless_) {
@@ -46,6 +55,12 @@ bool AltHack::run() {
       }
       main_window_.render();
     }
+  }
+
+  if (!headless_) {
+    spdlog::info("Tearing down frontend worker thread");
+    run_frontend = false;
+    frontend_thread.join();
   }
 
   spdlog::info("Tearing down backend worker thread");
@@ -83,19 +98,23 @@ void AltHack::setHeadless(bool headless) {
 }
 
 void AltHack::backendWorker(std::atomic<bool>& run_flag) {
-  if (!headless_) {
-    // Set initial values from backend cache.
-    main_window_.setAccounts(backend_->getAccounts());
-  }
-
   using namespace std::chrono_literals;
   while (run_flag) {
     backend_->step();
     std::this_thread::sleep_for(1ms);
+  }
+}
 
-    if (!headless_) {
-      // TODO(fairlight1337): Perform UI work.
-    }
+void AltHack::frontendWorker(std::atomic<bool>& run_flag) {
+  // Set initial values from backend cache.
+  main_window_.setAccounts(frontend_.getAccounts());
+
+  using namespace std::chrono_literals;
+  while (run_flag) {
+    frontend_.step();
+    std::this_thread::sleep_for(1ms);
+
+    // TODO(fairlight1337): Perform UI work.
   }
 }
 
