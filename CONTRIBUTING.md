@@ -33,3 +33,5 @@ There is a [list of issues](https://github.com/althack-project/althack/issues) o
 ## Styleguide
 
 The project has a style very similar to that of the [Google C++ Styleguide](https://google.github.io/styleguide/cppguide.html). If you feel something is off or does not make sense, feel free to flag it via [email](mailto:contact@althack-game.com) or [open a discussion](https://github.com/althack-project/althack/discussions)! I'm working on adding clang support to the build chain to enforce certain rules - but until then, use good judgement, look at the already existing code, and ask if something isn't crystal clear!
+
+I many cases, clang-tidy should catch the most common issues and guide you through correct code formatting and syntax essentials. If you think that the clang-tidy config needs improvement, feel free to propose a change.

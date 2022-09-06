@@ -21,6 +21,9 @@ set(THIRDPARTY_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
+# clang settings
+set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-fuchsia-statically-constructed-objects")
+
 # Project subdirectories
 add_subdirectory("docs")
 
@@ -40,11 +43,8 @@ set(SOCI_ORACLE OFF CACHE BOOL "" FORCE)
 set(SOCI_POSTGRESQL OFF CACHE BOOL "" FORCE)
 set(SOCI_DB2 OFF CACHE BOOL "" FORCE)
 
-# Add 3rdparty components
-add_subdirectory(${THIRDPARTY_DIR}/SDL)
-add_subdirectory(${THIRDPARTY_DIR}/libconfig)
-add_subdirectory(${THIRDPARTY_DIR}/spdlog)
-add_subdirectory(${THIRDPARTY_DIR}/soci)
+# Add 3rdparty directory
+add_subdirectory(${THIRDPARTY_DIR})
 
 configure_file(include/althack/config.hpp.in include/althack/config.hpp)
 

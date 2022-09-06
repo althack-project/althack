@@ -23,14 +23,14 @@ void signal_handler(int signal) { shutdown_handler(signal); }
 }  // namespace
 
 int main(int argc, char** argv) {
-  std::string config_path = "";
+  std::string config_path;
   bool headless = false;
 
   althack::AltHack instance;
 
   // Parse command line options
   try {
-    TCLAP::CmdLine cmd("AltHack command line", ' ', instance.getVersion());
+    TCLAP::CmdLine cmd("AltHack command line", ' ', althack::AltHack::getVersion());
 
     TCLAP::ValueArg<std::string> config_path_arg(
         "c", "config", "Path of configuration file to use", false, "", "path");
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     config_path = "../configs/default.cfg";
   }
 
-  spdlog::info("Instantiating AltHack (version " + instance.getVersion() + ")");
+  spdlog::info("Instantiating AltHack (version " + althack::AltHack::getVersion() + ")");
   instance.setHeadless(headless);
 
   if (headless) {
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
   }
 
   std::signal(SIGINT, signal_handler);
-  shutdown_handler = [&](int signal) { instance.stop(); };
+  shutdown_handler = [&](int /*signal*/) { instance.stop(); };
 
   spdlog::info("Ready, entering main loop");
   if (instance.run()) {
