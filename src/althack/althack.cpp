@@ -71,7 +71,7 @@ bool AltHack::teardown() {
   return true;
 }
 
-std::string AltHack::getVersion() const {
+std::string AltHack::getVersion() {
   return
     std::to_string(AH_MAJOR_VERSION) + "." +
     std::to_string(AH_MINOR_VERSION) + "." +

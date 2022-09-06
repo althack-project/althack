@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
   // Parse command line options
   try {
-    TCLAP::CmdLine cmd("AltHack command line", ' ', instance.getVersion());
+    TCLAP::CmdLine cmd("AltHack command line", ' ', althack::AltHack::getVersion());
 
     TCLAP::ValueArg<std::string> config_path_arg(
         "c", "config", "Path of configuration file to use", false, "", "path");
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     config_path = "../configs/default.cfg";
   }
 
-  spdlog::info("Instantiating AltHack (version " + instance.getVersion() + ")");
+  spdlog::info("Instantiating AltHack (version " + althack::AltHack::getVersion() + ")");
   instance.setHeadless(headless);
 
   if (headless) {

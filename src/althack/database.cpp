@@ -2,17 +2,18 @@
 
 // Standard
 #include <chrono>
+#include <cstdint>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
 
 namespace althack {
 
-std::string Database::getISO8601Timestamp() const {
+std::string Database::getISO8601Timestamp() {
   const auto now = std::chrono::system_clock::now();
   const std::time_t time = std::chrono::system_clock::to_time_t(now);
   const std::tm* now_tm = std::localtime(&time);
-  const int64 timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+  const int64_t timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 
   std::stringstream sts;
   sts << std::setfill('0')

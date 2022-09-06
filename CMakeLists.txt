@@ -43,11 +43,8 @@ set(SOCI_ORACLE OFF CACHE BOOL "" FORCE)
 set(SOCI_POSTGRESQL OFF CACHE BOOL "" FORCE)
 set(SOCI_DB2 OFF CACHE BOOL "" FORCE)
 
-# Add 3rdparty components
-add_subdirectory(${THIRDPARTY_DIR}/SDL)
-add_subdirectory(${THIRDPARTY_DIR}/libconfig)
-add_subdirectory(${THIRDPARTY_DIR}/spdlog)
-add_subdirectory(${THIRDPARTY_DIR}/soci)
+# Add 3rdparty directory
+add_subdirectory(${THIRDPARTY_DIR})
 
 configure_file(include/althack/config.hpp.in include/althack/config.hpp)
 

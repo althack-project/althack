@@ -19,7 +19,7 @@ class Database {
   virtual bool close() = 0;
 
  protected:
-  std::string getISO8601Timestamp() const;
+  static std::string getISO8601Timestamp();
 };
 
 }  // namespace althack

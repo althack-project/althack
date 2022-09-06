@@ -44,7 +44,7 @@ class AltHack {
   // ...
   bool teardown();
 
-  std::string getVersion() const;
+  static std::string getVersion();
 
   void setHeadless(bool headless);
 
