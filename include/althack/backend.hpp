@@ -14,6 +14,8 @@ class Backend {
  public:
   Backend(const std::string& identifier);
 
+  virtual ~Backend() = default;
+
   const std::string& getIdentifier() const;
 
   virtual void step() = 0;

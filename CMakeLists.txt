@@ -22,7 +22,7 @@ set(THIRDPARTY_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 # clang settings
-set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-fuchsia-statically-constructed-objects")
+set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-fuchsia-statically-constructed-objects,-cert-err58-cpp")
 
 # Project subdirectories
 add_subdirectory("docs")
