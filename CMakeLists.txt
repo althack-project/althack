@@ -22,7 +22,7 @@ set(THIRDPARTY_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 # clang settings
-set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-fuchsia-statically-constructed-objects")
+set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-fuchsia-statically-constructed-objects,-cert-err58-cpp")
 
 # Project subdirectories
 add_subdirectory("docs")
@@ -57,10 +57,12 @@ include_directories(
   ${THIRDPARTY_DIR}/spdlog/include
   ${THIRDPARTY_DIR}/soci/include
   ${CMAKE_BINARY_DIR}/3rdparty/soci/include
-  ${CMAKE_BINARY_DIR}/include)
+  ${CMAKE_BINARY_DIR}/include
+  ${CMAKE_BINARY_DIR}/openssl-build/usr/local/include)
 
 link_directories(
-  ${CMAKE_BINARY_DIR}/lib)
+  ${CMAKE_BINARY_DIR}/lib
+  ${CMAKE_BINARY_DIR}/openssl-build/usr/local/lib64)
 
 add_library(imgui
   ${THIRDPARTY_DIR}/imgui/imgui.cpp
@@ -76,6 +78,7 @@ add_library(${PROJECT_NAME}
 add_executable(${PROJECT_NAME}-bin
   src/main.cpp
   src/althack/main_window.cpp
+  src/althack/crypto_service.cpp
   src/althack/frontend.cpp
   src/althack/backend.cpp
   src/althack/backends/server_backend.cpp
@@ -90,7 +93,8 @@ target_link_libraries(${PROJECT_NAME}
   config++
   soci_core
   soci_sqlite3
-  dl)
+  dl
+  crypto)
 
 target_link_libraries(${PROJECT_NAME}-bin
   ${PROJECT_NAME})

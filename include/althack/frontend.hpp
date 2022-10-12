@@ -6,6 +6,7 @@
 
 // Althack
 #include <althack/backend.hpp>
+#include <althack/crypto_service.hpp>
 
 namespace althack {
 
@@ -16,6 +17,8 @@ class Frontend {
   void step();
 
   const std::list<visuals::AccountNode> getAccounts();
+
+  bool createAccount(const std::string& username);
 
  private:
   std::shared_ptr<Backend> backend_;

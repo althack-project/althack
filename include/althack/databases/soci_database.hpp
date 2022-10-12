@@ -35,6 +35,19 @@ class SociDatabase : public Database {
   bool close() override;
 
  private:
+  EntityId createEntity(const std::string& domain) override;
+
+  void deleteEntity(EntityId entity_id) override;
+
+  EntityId storeBlob(const std::string& value) override;
+
+  void associateBlobProperty(
+      const std::string& domain, EntityId blob_id, EntityId entity_id,
+      const std::string& key) override;
+
+  void deleteBlobProperty(
+      const std::string& domain, EntityId entity_id, const std::string& key) override;
+
   //! \brief The database session to use.
   soci::session session_;
   //! \brief The database file to use.

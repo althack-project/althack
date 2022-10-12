@@ -19,7 +19,7 @@ bool AltHack::setup() {
     return false;
   }
 
-  // TODO: Decide how server/client backend is determined.
+  // TODO(fairlight1337): Decide how server/client backend is determined.
   backend_ = std::make_shared<backends::ServerBackend>("database.db");
   frontend_.connect(backend_);
 
@@ -79,11 +79,7 @@ void AltHack::stop() {
 }
 
 bool AltHack::teardown() {
-  if (!headless_ && !main_window_.teardown()) {
-    return false;
-  }
-
-  return true;
+  return !headless_ && !main_window_.teardown();
 }
 
 std::string AltHack::getVersion() {
