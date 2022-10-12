@@ -21,6 +21,30 @@ set(THIRDPARTY_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
+set(BUILD_PLATFORM "Windows")
+#set(BUILD_PLATFORM "Linux")
+
+if("${BUILD_PLATFORM}" STREQUAL "Windows")
+  set(CMAKE_THREAD_LIBS_INIT "-lpthread" CACHE STRING "" FORCE)
+  set(CMAKE_HAVE_THREADS_LIBRARY 1 CACHE BOOL "" FORCE)
+  set(CMAKE_USE_WIN32_THREADS_INIT 0 CACHE BOOL "" FORCE)
+  set(CMAKE_USE_PTHREADS_INIT 1 CACHE BOOL "" FORCE)
+  set(THREADS_PREFER_PTHREAD_FLAG ON CACHE BOOL "" FORCE)
+
+  set(MINGW_PREFIX "x86_64-w64-mingw32" CACHE STRING "" FORCE)
+  set(CMAKE_SYSTEM_NAME "Windows" CACHE STRING "" FORCE)
+  set(CMAKE_SYSTEM_VERSION "10" CACHE STRING "" FORCE)
+  set(CMAKE_SYSTEM "${CMAKE_SYSTEM_NAME}" CACHE STRING "" FORCE)
+  set(CMAKE_C_COMPILER "/usr/bin/${MINGW_PREFIX}-gcc" CACHE STRING "" FORCE)
+  set(CMAKE_CXX_COMPILER "/usr/bin/${MINGW_PREFIX}-g++" CACHE STRING "" FORCE)
+  set(CMAKE_FIND_ROOT_PATH "/usr/${MINGW_PREFIX}" CACHE STRING "" FORCE)
+  set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER CACHE STRING "" FORCE)
+  set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY CACHE STRING "" FORCE)
+  set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY CACHE STRING "" FORCE)
+  set(WIN32 ON CACHE BOOL "" FORCE)
+  set(CMAKE_RC_COMPILER "/usr/bin/${MINGW_PREFIX}-windres" CACHE STRING "" FORCE)
+endif()
+
 # clang settings
 set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-fuchsia-statically-constructed-objects")
 
@@ -70,6 +94,10 @@ add_library(imgui
   ${THIRDPARTY_DIR}/imgui/backends/imgui_impl_sdl.cpp
   ${THIRDPARTY_DIR}/imgui/backends/imgui_impl_sdlrenderer.cpp)
 
+target_link_libraries(imgui
+  SDL2
+  SDL2main)
+
 add_library(${PROJECT_NAME}
   src/althack/althack.cpp)
 
@@ -90,7 +118,8 @@ target_link_libraries(${PROJECT_NAME}
   config++
   soci_core
   soci_sqlite3
-  dl)
+  dl
+  stdc++fs)
 
 target_link_libraries(${PROJECT_NAME}-bin
   ${PROJECT_NAME})
